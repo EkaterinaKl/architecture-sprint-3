@@ -1,0 +1,31 @@
+@startuml
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+System_Boundary(c1, "Система 'Warm House'") {
+
+Person(user, "Пользователь")
+Person(admin, "Пользователь")
+
+Container_Boundary(c0, "Домен управления датчиками") {
+
+Container_Boundary(c2, "Контекст мониторинга телеметрии") {
+Container(MonitoringSystem, "Микросервис мониторинга", "Предоставляет данные о показаниях датчиков, историю изменения и текущее состояние доступности")
+}
+
+Container_Boundary(c3, "Контекст управления устройством") {
+Container(ManagementParamSystem, "Микросервис управления параметрами модуля", "Позволяет задавать целевые значения контролируемых параметров")
+Container(ManagementDeviceSystem, "Микросервис регистрации устройства", "Позволяет подключать устройства к системе")
+}
+
+}
+
+Rel(user, ManagementParamSystem, "Настраивает прибор", "HTTPS")
+Rel(user, MonitoringSystem, "Просматривает данные", "HTTPS")
+Rel(admin,ManagementDeviceSystem, "Регистрирует устройство", "HTTPS")
+
+}
+
+@enduml

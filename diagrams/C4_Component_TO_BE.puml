@@ -1,0 +1,73 @@
+@startuml
+title Warm House Container Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container_Ext(device1, "Device", "Компонент устройства")
+Container_Ext(device2, "Device", "Компонент устройства")
+Container_Ext(device3, "Device", "Компонент устройства")
+System_Boundary(c0, "Warm House") {
+System_Boundary(c1, "Управление устройствами") {
+Container(registration, "Управление устройствами", "Компонент регистрации")
+Component(settingsCtrl, "RegisterSettingsController", "Компонент отчетов")
+Component(registerDeviceCtrl, "RegisterDeviceController", "Компонент отчетов")
+Component(serviceLayer2, "Service Layer")
+Component(repository2, "Repository Layer")
+}
+System_Boundary(c2, "Управление учтеной записью") {
+Container(account, "Управление учтеной записью", "Компонент управления аккаунтом")
+Component(registerUserCtrl, "RegisterUserController", "Компонент отчетов")
+Component(serviceLayer1, "Service Layer")
+Component(repository1, "Repository Layer")
+}
+
+System_Boundary(c3, "Получение телеметрии") {
+Container(reportComponent, "Получение телеметрии", "Компонент отчетов")
+Component(reportCtrl, "ReportController", "Компонент отчетов")
+Component(serviceLayer3, "Service Layer")
+Component(repository3, "Repository Layer")
+
+}
+
+ContainerQueue(kafkaQueue, "Kafka Queue", "Очередь сообщений Kafka")
+
+Component(kafkaConnector, "kafkaConnector", "Компонент отчетов")
+ContainerDb(clickhouseDB, "ClickHouse DB", "База данных ClickHouse")
+ContainerDb(userDB, "User DB", "База данных пользователей")
+
+
+ContainerDb(deviceDB, "Device DB", "База данных устройств")
+}
+
+Rel(serviceLayer1, repository1, "Записывает/читает данные")
+Rel(repository1, userDB, "Записывает/читает данные")
+Rel(serviceLayer2, repository2, "Записывает/читает данные")
+Rel(serviceLayer3, repository3, "Записывает/читает данные")
+
+Rel(repository2, deviceDB, "Записывает/читает данные")
+Rel(repository3, clickhouseDB, "Читает данные")
+
+Rel( registerUserCtrl, serviceLayer1,"Записывает/читает данные")
+Rel( registerDeviceCtrl, serviceLayer2,"Данные об устройстве")
+Rel( settingsCtrl,serviceLayer2, "Данные об устройстве и настройках")
+Rel( reportCtrl, serviceLayer3,"Запрашивает отчет")
+
+
+Rel(device1, kafkaQueue, "Записывает сообщения")
+Rel(device2, kafkaQueue, "Записывает сообщения")
+Rel(device3, kafkaQueue, "Записывает сообщения")
+Rel(kafkaConnector, clickhouseDB, "Отправляет сообщения")
+Rel(kafkaQueue, kafkaConnector, "Вычитывает сообщения")
+
+Rel(reportComponent, reportCtrl, "Запрашивает отчет")
+
+Rel(registration, registerDeviceCtrl,  "Данные об устройстве")
+
+Rel(account, registerUserCtrl, "Данные о пользователе")
+
+Rel(registration, settingsCtrl, "Данные об устройстве и настройках")
+
+
+@enduml

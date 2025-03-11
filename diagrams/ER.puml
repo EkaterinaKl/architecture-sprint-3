@@ -1,0 +1,78 @@
+@startuml
+entity "Credentials" {
+* cred_id : NUMBER
+  --
+  user_id : NUMBER
+  login : VARCHAR
+  password : VARCHAR
+  }
+
+entity "User" {
+* user_id : NUMBER
+  --
+  firstname : VARCHAR
+  name : VARCHAR
+  lastname : VARCHAR
+  email : VARCHAR
+  phone : VARCHAR
+  }
+
+entity "House" {
+* house_id : NUMBER
+  --
+  user_id : NUMBER
+  address : VARCHAR
+  }
+
+
+entity "Module" {
+* module_id : NUMBER
+  --
+  house_id : NUMBER
+  name : VARCHAR
+  model : VARCHAR
+  serial_number : VARCHAR
+  }
+
+entity "Settings" {
+* module_id : NUMBER
+* device_id : NUMBER
+  --
+  target_value: NUMBER
+  }
+
+entity "Device" {
+* device_id : NUMBER
+  --
+  module_id : NUMBER
+  house_id : NUMBER
+  type_id : NUMBER
+  model : VARCHAR
+  frequenceMs : NUMBER
+  serial_number : VARCHAR
+  status : BOOLEAN
+  }
+
+entity "DeviceType" {
+* type_id : NUMBER
+  --
+  type : VARCHAR
+  }
+
+entity "TelemetryData" {
+* device_id : NUMBER
+* datetime : DATETIME
+  --
+  value : NUMBER
+  }
+
+User ||--o{ House
+User ||--|| Credentials
+House ||--|| Module
+Module ||--o{ Device
+Module ||--o{ Settings
+Device ||--|| Settings
+DeviceType ||--o{ Device
+Device ||--o{ TelemetryData
+
+@enduml
