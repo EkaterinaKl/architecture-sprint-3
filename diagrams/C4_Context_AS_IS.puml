@@ -1,0 +1,25 @@
+@startuml
+title Warm House Context Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "User", "A user of the Warm House")
+Person(admin, "Administrator", "An administrator managing the Warm House")
+
+System(SystemAdminUI, "Admin UI", "System managing devices")
+System(SystemUserUI, "User Mobile APP ", "Managing devices and getting telemetry")
+System(System, "Warm House System", "System managing devices and telemetry")
+
+ComponentDb(DB, "Postgres", "Telemetry Data")
+System_Ext(Device, "Device", "Monitors environment")
+
+Rel(user, SystemUserUI, "Get a telemetry reports and set parameters")
+Rel(admin,SystemAdminUI,"Install the devices to system")
+Rel(SystemUserUI, System, "Get a telemetry reports and set parameters")
+Rel(SystemAdminUI,System,"Install the devices to system")
+Rel(System,DB,"Fetches device data", "jdbc")
+Rel(Device, System, "Send telemetry ", "HTTP")
+
+@enduml

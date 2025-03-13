@@ -1,0 +1,38 @@
+@startuml
+
+Class Controller {
+    +Report: getReport(startDate: DateTime, endDate: DateTime)
+}
+
+Class Report {
+    +data: List<DataEntry>
+    +generate(): void
+}
+
+Class DataEntry {
+    +device_id: VARCHAR
+    +date: DATE
+    +value: NUMBER
+}
+
+
+Class ServiceLayer {
+    +List<DataEntry>validateAndGet (startDate: DateTime, endDate: DateTime)
+}
+
+Class DataRepository {
+    +List<DataEntry>fetchData (startDate: DateTime, endDate: DateTime)
+}
+
+Class ReportView {
+    +void render(report: Report)
+}
+
+Controller --> ServiceLayer : validateAndGet
+ServiceLayer --> DataRepository : fetchData
+DataRepository --> Report : generateReport
+Report --> ReportView : render
+Report --> DataEntry : contains
+
+
+@enduml

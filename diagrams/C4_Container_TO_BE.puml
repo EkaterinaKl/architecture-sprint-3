@@ -1,0 +1,44 @@
+@startuml
+title Warm House Container Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+
+Container_Ext(device1, "Device", "Компонент устройства")
+Container_Ext(device2, "Device", "Компонент устройства")
+Container_Ext(device3, "Device", "Компонент устройства")
+System_Ext(keycloak, "Keycloak", "Система управления идентификацией и доступом.")
+
+System_Boundary(c0, "Warm House") {
+Container(ui, "UI", "Пользовательский интерфейс")
+System_Boundary(c1, "Backend") {
+Container(registration, "Управление устройствами", "Компонент регистрации")
+Container(account, "Управление учтеной записью", "Компонент управления аккаунтом")
+Container(APIGateway, "APIGateway", "API Gateway")
+Container(reportComponent, "Получение телеметрии", "Компонент отчетов")
+ContainerDb(clickhouseDB, "ClickHouse DB", "База данных ClickHouse")
+ContainerDb(userDB, "User DB", "База данных пользователей")
+ContainerDb(deviceDB, "Device DB", "База данных устройств")
+Container(recordComponent, "Фиксация телеметрии", "Компонент сбора показаний")
+}
+}
+
+Rel(ui, APIGateway, "Отправляет запрос на регистрацию", "HTTP")
+Rel(ui, APIGateway, "Управляет аккаунтом", "HTTP")
+Rel(ui, APIGateway, "Изменяет настройки", "HTTP")
+Rel(ui, APIGateway, "Изменяет настройки", "HTTP")
+Rel(ui, keycloak, "Запррос токена", "HTTP")
+
+Rel(recordComponent, clickhouseDB,"Записывает сообщения", "JDBC")
+Rel(APIGateway, registration, "Отправляет запрос на регистрацию/настройки устройства", "HTTP")
+Rel(APIGateway, account, "Управляет аккаунтом", "HTTP")
+Rel(APIGateway, reportComponent, "Запрашивает отчет", "HTTP")
+Rel(registration, deviceDB, "Данные об устройстве", "JDBC")
+Rel(account, userDB, "Данные о пользователе", "JDBC")
+Rel(reportComponent, clickhouseDB, "Извлекает  отчёты", "JDBC")
+Rel(device1, recordComponent, "Записывает сообщения", "JSON")
+Rel(device2, recordComponent, "Записывает сообщения", "JSON")
+Rel(device3, recordComponent, "Записывает сообщения", "JSON")
+
+@enduml
