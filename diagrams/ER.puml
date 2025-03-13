@@ -50,7 +50,12 @@ entity "Device" {
   model : VARCHAR
   frequenceMs : NUMBER
   serial_number : VARCHAR
-  status : BOOLEAN
+  status : ENUM
+  }
+
+enum "Status" {
+  ON
+  OFF
   }
 
 entity "DeviceType" {
@@ -74,5 +79,6 @@ Module ||--o{ Settings
 Device ||--|| Settings
 DeviceType ||--o{ Device
 Device ||--o{ TelemetryData
+Status ||--o{ Device
 
 @enduml

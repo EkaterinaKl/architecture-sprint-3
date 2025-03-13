@@ -7,24 +7,32 @@ top to bottom direction
 System_Boundary(c1, "Система 'Warm House'") {
 
 Person(user, "Пользователь")
-Person(admin, "Пользователь")
+Person(admin, "Администратор")
 
 Container_Boundary(c0, "Домен управления датчиками") {
-
+Container(MonitoringMobiSystem, "Мобильное приложение", "React Native", "Предоставляет данные о показаниях датчиков, устанавливать значения.")
 Container_Boundary(c2, "Контекст мониторинга телеметрии") {
-Container(MonitoringSystem, "Микросервис мониторинга", "Предоставляет данные о показаниях датчиков, историю изменения и текущее состояние доступности")
+Container(MonitoringSystem, "Микросервис мониторинга Backend", "Java", "Предоставляет данные о показаниях датчиков, историю изменения и текущее состояние доступности")
 }
 
 Container_Boundary(c3, "Контекст управления устройством") {
-Container(ManagementParamSystem, "Микросервис управления параметрами модуля", "Позволяет задавать целевые значения контролируемых параметров")
-Container(ManagementDeviceSystem, "Микросервис регистрации устройства", "Позволяет подключать устройства к системе")
+Container(ManagementParamSystem, "Микросервис управления параметрами модуля", "Java","Позволяет задавать целевые значения контролируемых параметров")
+Container(ManagementDeviceSystem, "Микросервис регистрации устройства","Java", "Позволяет подключать устройства к системе")
+Container(ManagementDeviceUI, "UI  Администратора","React", "Позволяет подключать устройства к системе")
 }
 
+Container(Device, "Датчик температуры","API", "Передает показания")
 }
 
-Rel(user, ManagementParamSystem, "Настраивает прибор", "HTTPS")
-Rel(user, MonitoringSystem, "Просматривает данные", "HTTPS")
-Rel(admin,ManagementDeviceSystem, "Регистрирует устройство", "HTTPS")
+Rel(user, MonitoringMobiSystem, "Настраивает прибор", "HTTPS")
+Rel(MonitoringMobiSystem, ManagementParamSystem, "Настраивает прибор", "HTTPS")
+Rel(user, MonitoringMobiSystem, "Просматривает данные", "HTTPS")
+Rel(MonitoringMobiSystem, MonitoringSystem, "Предоставляет данные", "HTTPS")
+Rel(MonitoringSystem, Device, "Запрашиват показания", "HTTPS")
+Rel(admin,ManagementDeviceUI, "Регистрирует устройство", "HTTPS")
+Rel(ManagementDeviceUI,ManagementDeviceSystem, "Регистрирует устройство", "HTTPS")
+Rel(ManagementDeviceSystem, Device, "Проверка подключения", "HTTPS")
+Rel(ManagementParamSystem, Device, "Включение/выключение и настройка устройства", "HTTPS")
 
 }
 

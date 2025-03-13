@@ -16,11 +16,11 @@ System_Boundary(c1, "Backend") {
 Container(registration, "Управление устройствами", "Компонент регистрации")
 Container(account, "Управление учтеной записью", "Компонент управления аккаунтом")
 Container(APIGateway, "APIGateway", "API Gateway")
-ContainerQueue(kafkaQueue, "Kafka Queue", "Очередь сообщений Kafka")
 Container(reportComponent, "Получение телеметрии", "Компонент отчетов")
 ContainerDb(clickhouseDB, "ClickHouse DB", "База данных ClickHouse")
 ContainerDb(userDB, "User DB", "База данных пользователей")
 ContainerDb(deviceDB, "Device DB", "База данных устройств")
+Container(recordComponent, "Фиксация телеметрии", "Компонент сбора показаний")
 }
 }
 
@@ -29,15 +29,16 @@ Rel(ui, APIGateway, "Управляет аккаунтом", "HTTP")
 Rel(ui, APIGateway, "Изменяет настройки", "HTTP")
 Rel(ui, APIGateway, "Изменяет настройки", "HTTP")
 Rel(ui, keycloak, "Запррос токена", "HTTP")
+
+Rel(recordComponent, clickhouseDB,"Записывает сообщения", "JDBC")
 Rel(APIGateway, registration, "Отправляет запрос на регистрацию/настройки устройства", "HTTP")
 Rel(APIGateway, account, "Управляет аккаунтом", "HTTP")
 Rel(APIGateway, reportComponent, "Запрашивает отчет", "HTTP")
 Rel(registration, deviceDB, "Данные об устройстве", "JDBC")
 Rel(account, userDB, "Данные о пользователе", "JDBC")
 Rel(reportComponent, clickhouseDB, "Извлекает  отчёты", "JDBC")
-Rel(device1, kafkaQueue, "Записывает сообщения", "JSON")
-Rel(device2, kafkaQueue, "Записывает сообщения", "JSON")
-Rel(device3, kafkaQueue, "Записывает сообщения", "JSON")
-Rel(kafkaQueue, clickhouseDB, "Вычитывает сообщения", "JSON")
+Rel(device1, recordComponent, "Записывает сообщения", "JSON")
+Rel(device2, recordComponent, "Записывает сообщения", "JSON")
+Rel(device3, recordComponent, "Записывает сообщения", "JSON")
 
 @enduml
